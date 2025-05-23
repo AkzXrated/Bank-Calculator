@@ -1,3 +1,5 @@
+from datetime import datetime
+
 # --- Bank Specific Calculator CLI App ---
 
 def format_inr(amount):
@@ -253,6 +255,71 @@ def calculate_fd_interest():
     print(f"Tenure: {tenure_months} months")
     print("-" * 30)
 
+# --- NEW Interest Between Dates Calculator ---
+
+def calculate_interest_between_dates():
+    """
+    Calculates the interest accrued between two given dates.
+    """
+    print("\n--- Interest Between Dates Calculator ---")
+
+    while True:
+        try:
+            date_format = "%Y-%m-%d"
+            start_date_str = input("Enter the first date (YYYY-MM-DD): ")
+            start_date = datetime.strptime(start_date_str, date_format).date()
+            break
+        except ValueError:
+            print("Invalid date format. Please use YYYY-MM-DD.")
+
+    while True:
+        try:
+            date_format = "%Y-%m-%d"
+            end_date_str = input("Enter the second date (YYYY-MM-DD): ")
+            end_date = datetime.strptime(end_date_str, date_format).date()
+            if end_date < start_date:
+                raise ValueError("End date cannot be before the start date.")
+            break
+        except ValueError as e:
+            print(f"Invalid date format or date order: {e}. Please use YYYY-MM-DD and ensure the end date is after the start date.")
+
+    while True:
+        try:
+            balance_str = input("Enter the balance: ")
+            balance = float(balance_str.replace(',', ''))
+            if balance < 0:
+                raise ValueError("Balance cannot be negative.")
+            break
+        except ValueError as e:
+            print(f"Invalid input: {e}. Please enter a non-negative number.")
+
+    while True:
+        try:
+            annual_rate_str = input("Enter the annual interest rate (%): ")
+            annual_rate = float(annual_rate_str)
+            if annual_rate < 0:
+                raise ValueError("Interest rate cannot be negative.")
+            break
+        except ValueError as e:
+            print(f"Invalid input: {e}. Please enter a non-negative number.")
+
+    time_difference = end_date - start_date
+    num_days = time_difference.days
+    print(f"\nNumber of days between {start_date} and {end_date}: {num_days}")
+
+    daily_interest_rate = annual_rate / 100 / 365
+    interest_per_day = balance * daily_interest_rate
+    print(f"Interest per day: {format_inr(interest_per_day)}")
+
+    if num_days > 30:
+        # Approximate monthly interest (using 30 days)
+        monthly_interest_approx = balance * (annual_rate / 100 / 12)
+        print(f"Approximate interest per month: {format_inr(monthly_interest_approx)}")
+
+    interest_between_dates = balance * daily_interest_rate * num_days
+    print(f"Interest between {start_date} and {end_date}: {format_inr(interest_between_dates)}")
+    print("-" * 30)
+
 # --- Main Application Logic ---
 
 def main():
@@ -263,23 +330,26 @@ def main():
     while True:
         print("\n--- Welcome to the Cooperative Bank Calculator! ---")
         print("1. Loan Calculator (Summary)")
-        print("2. Loan Repayment Schedule Table") # New option for your provided loan function
+        print("2. Loan Repayment Schedule Table")
         print("3. Fixed Deposit (FD) Interest Calculator")
-        print("4. Exit") # Exit option shifted to 4
+        print("4. Calculate Interest Between Dates") # New option
+        print("5. Exit")
         
         choice = input("Enter your choice: ")
 
         if choice == '1':
-            calculate_loan_summary() # Calls the original loan calculator (now summary)
+            calculate_loan_summary()
         elif choice == '2':
-            calculate_loan_repayment_table() # Calls your new loan repayment table function
+            calculate_loan_repayment_table()
         elif choice == '3':
             calculate_fd_interest()
-        elif choice == '4': # Exit is now 4
+        elif choice == '4':
+            calculate_interest_between_dates() # Call the new function
+        elif choice == '5':
             print("Thank you for using the calculator. Goodbye!")
             break
         else:
-            print("Invalid choice. Please enter a number between 1 and 4.") # Updated range
+            print("Invalid choice. Please enter a number between 1 and 5.")
 
 if __name__ == "__main__":
     main()
