@@ -20,14 +20,13 @@ This calculator currently includes the following functionalities:
 
 No installation needed! Since this is a Python script, you just need to have Python 3.x installed on your system.
 
-1.  **Download the script:** You can download the `your_script_name.py` file directly from this repository.
+1.  **Download the script:** You can download the `bank_calc.py` file directly from this repository.
 2.  **Run from your terminal:** Open your terminal or command prompt, navigate to the directory where you saved the file, and run:
 
     ```bash
-    python your_script_name.py
+    python bank_calc.py
     ```
 
-    *(Make sure to replace `your_script_name.py` with the actual name of your Python file.)*
 
 ## ⚙️ Usage
 
