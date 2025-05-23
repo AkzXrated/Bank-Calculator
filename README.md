@@ -1,33 +1,128 @@
-# 🏦💰 Bank Calculator CLI App 🇮🇳
+# 💰 Bank Specific Calculator CLI App
 
-[![Python](https://img.shields.io/badge/Python-3.x-blue.svg?style=flat-square)](https://www.python.org/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-![Lines of Code](https://img.shields.io/tokei/lines/github/YOUR_GITHUB_USERNAME/YOUR_REPOSITORY_NAME?style=flat-square)
-![Last Commit](https://img.shields.io/github/last-commit/YOUR_GITHUB_USERNAME/YOUR_REPOSITORY_NAME?style=flat-square)
+A comprehensive, terminal-based financial calculator tailored for Indian banking workflows. This CLI tool helps users compute various interest-related figures and repayment schedules for loans, fixed deposits, and daily deposit schemes with precision and INR formatting.
 
-Welcome to the **Cooperative Bank Calculator**, a simple yet useful Command Line Interface (CLI) application designed to help you with common banking calculations specific to India! 🇮🇳
+---
 
-## ✨ Features
+## 📦 Features
 
-This calculator currently includes the following functionalities:
+- **📉 Loan Calculator**
+  - Reducing balance method with fixed principal payments
+  - Loan summary and optional detailed amortization schedule
 
-1.  **Loan Calculator (Summary):** 📊 Get a quick summary of your loan, including total interest paid and the total amount payable.
-2.  **Loan Repayment Schedule Table:** 🗓️ View a detailed month-by-month repayment schedule, showing principal, interest, EMI, and the outstanding balance.
-3.  **Fixed Deposit (FD) Interest Calculator:** 💸 Calculate the interest earned on your Fixed Deposits with options for interest added on maturity or monthly payouts.
-4.  **Calculate Interest Between Dates:** 🗓️➡️🗓️ Determine the number of days and the interest accrued between any two given dates.
+- **🏦 Fixed Deposit Calculator**
+  - Interest at maturity
+  - Monthly interest payout
+
+- **📆 Interest Between Dates**
+  - Calculate per-day interest for a given balance between two dates
+  - Useful for overdraft or unpaid balances
+
+- **🗓️ Daily Deposit Interest Calculator**
+  - Handles daily, weekly, or monthly collection plans
+  - Computes accrued interest per deposit for a specified term
+
+- **💸 INR Formatting**
+  - Displays all monetary values using Indian numbering and the ₹ symbol
+
+---
 
 ## 🚀 Getting Started
 
-No installation needed! Since this is a Python script, you just need to have Python 3.x installed on your system.
+### 🔧 Requirements
 
-1.  **Download the script:** You can download the `bank_calc_cli.py` file directly from this repository.
-2.  **Run from your terminal:** Open your terminal or command prompt, navigate to the directory where you saved the file, and run:
+- Python 3.8 or newer
 
-    ```bash
-    python bank_calc_cli.py
-    ```
+### ▶️ How to Run
 
+1. Clone the repository or copy the script.
+2. Run the script in your terminal:
 
-## ⚙️ Usage
+```bash
+python bank_calculator.py
+````
 
-Once you run the script, a menu will appear with the available options. Simply enter the number corresponding to the calculation you want to perform and follow the on-screen prompts.
+3. Follow the on-screen prompts to navigate the calculators.
+
+---
+
+## 🧮 Example Use Cases
+
+* 📊 **Loan Summary Only:**
+
+  * Enter loan amount, term, and interest rate.
+  * View total interest and total payments without detailed EMIs.
+
+* 📋 **Full Loan Amortization Table:**
+
+  * Get month-wise breakdown of principal, interest, EMI, and balance.
+
+* 🏁 **FD Calculation:**
+
+  * Compare maturity value vs monthly payout scenarios.
+
+* 📅 **Interest Between Dates:**
+
+  * See accrued interest from date-to-date on any balance.
+
+* 📆 **Daily Deposits:**
+
+  * Visualize how periodic deposits grow over time with interest.
+
+---
+
+## 📂 File Structure
+
+```
+bank_calculator.py     # Main script containing all logic and menus
+README.md              # You're here!
+```
+
+---
+
+## 🛠️ Functionality Overview
+
+### `format_inr(amount)`
+
+Formats numbers in Indian currency style: ₹1,23,456.78
+
+### `calculate_loan_summary_and_table()`
+
+Loan EMI summary using reducing balance method, with optional schedule.
+
+### `calculate_loan_repayment_table(loan_amount, term_months, annual_rate)`
+
+Detailed EMI schedule printer.
+
+### `calculate_fd_interest()`
+
+Fixed Deposit calculator supporting two interest types.
+
+### `calculate_interest_between_dates()`
+
+Simple interest computation between two given dates.
+
+### `daily_deposit_interest_calculator()`
+
+Accumulates and displays interest from recurring deposits.
+
+---
+
+## 🇮🇳 INR Formatting Example
+
+```
+Input: 1234567.89
+Output: ₹12,34,567.89
+```
+
+---
+
+## 🧾 License
+
+This project is free to use and modify for personal or institutional purposes. Attribution appreciated.
+
+---
+
+## 📬 Feedback
+
+Feel free to open issues or feature requests. Contributions welcome!
