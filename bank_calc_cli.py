@@ -1,4 +1,5 @@
-from datetime import datetime
+from datetime import datetime, timedelta
+import calendar # Added for accurate monthly date increments
 
 # --- Bank Specific Calculator CLI App ---
 
@@ -23,18 +24,18 @@ def format_inr(amount):
     
     return "₹" + integer_part + "." + parts[1]
 
-# --- ORIGINAL Loan Calculation Function (now provides summary) ---
+# --- Loan Calculator (Summary & Optional Repayment Table) ---
 
-def calculate_loan_summary():
+def calculate_loan_summary_and_table():
     """
-    Calculates loan amortization using the reducing balance method and provides a summary.
-    This is the original loan calculation behavior.
+    Calculates loan amortization using the reducing balance method, provides a summary,
+    and optionally prints a detailed monthly repayment schedule.
     """
-    print("\n--- Loan Calculator (Reducing Balance Method Summary) ---")
+    print("\n--- Loan Calculator (Reducing Balance Method) ---")
     
     while True:
         try:
-            loan_amount_str = input("Enter Loan Amount (e.g., 500000): ")
+            loan_amount_str = input("Enter Loan Amount: ") # Removed example
             loan_amount = float(loan_amount_str.replace(',', ''))
             if loan_amount <= 0:
                 raise ValueError("Loan amount must be positive.")
@@ -44,7 +45,7 @@ def calculate_loan_summary():
 
     while True:
         try:
-            term_months_str = input("Enter Loan Term in Months (e.g., 60): ")
+            term_months_str = input("Enter Loan Term (in months): ") # Simplified prompt
             term_months = int(term_months_str)
             if term_months <= 0:
                 raise ValueError("Term must be positive.")
@@ -54,7 +55,7 @@ def calculate_loan_summary():
 
     while True:
         try:
-            annual_rate_str = input("Enter Annual Interest Rate in % (e.g., 9.5): ")
+            annual_rate_str = input("Enter Annual Interest Rate (%): ") # Simplified prompt
             annual_rate = float(annual_rate_str)
             if annual_rate < 0:
                 raise ValueError("Interest rate cannot be negative.")
@@ -93,63 +94,49 @@ def calculate_loan_summary():
     print(f"Total Amount Paid (Principal + Interest): {format_inr(total_payments)}")
     print("-" * 30)
 
-# --- NEW Loan Repayment Table Function (Your Provided Code) ---
+    # Ask if user wants to see the detailed repayment schedule
+    while True:
+        show_table = input("\nDo you want to see the detailed repayment schedule table? (yes/no): ").strip().lower()
+        if show_table in ['yes', 'y']:
+            # Pass the already obtained values to the table function
+            calculate_loan_repayment_table(loan_amount, term_months, annual_rate)
+            break
+        elif show_table in ['no', 'n']:
+            print("Repayment schedule not displayed.")
+            break
+        else:
+            print("Invalid input. Please type 'yes' or 'no'.")
 
-def calculate_loan_repayment_table():
+
+# --- Loan Repayment Table Function (Modified to accept parameters) ---
+
+def calculate_loan_repayment_table(loan_amount, term_months, annual_rate):
     """
     Calculates loan amortization and prints a detailed monthly repayment schedule.
     This function uses the reducing balance method with fixed principal per installment.
+    It now accepts loan details as parameters.
     """
-    print("\n--- Loan Repayment Schedule Table ---")
-
-    while True:
-        try:
-            loan_amount_str = input("Enter Loan Amount: ")
-            loan_amount = float(loan_amount_str.replace(',', ''))
-            if loan_amount <= 0:
-                raise ValueError("Loan amount must be positive.")
-            break
-        except ValueError as e:
-            print(f"Invalid input: {e}. Please enter a positive number.")
-
-    while True:
-        try:
-            term_months_str = input("Enter Term (months): ")
-            term_months = int(term_months_str)
-            if term_months <= 0:
-                raise ValueError("Term must be positive.")
-            break
-        except ValueError as e:
-            print(f"Invalid input: {e}. Please enter a positive whole number.")
-
-    while True:
-        try:
-            annual_rate_str = input("Enter Annual Interest Rate (%): ")
-            annual_rate = float(annual_rate_str)
-            if annual_rate < 0:
-                raise ValueError("Interest rate cannot be negative.")
-            break
-        except ValueError as e:
-            print(f"Invalid input: {e}. Please enter a non-negative number.")
+    print("\n--- Detailed Loan Repayment Schedule Table ---")
 
     principal_per_installment = loan_amount / term_months
     balance = loan_amount
     monthly_rate = annual_rate / 100 / 12
 
     print("\n--- Monthly Repayment Details ---")
-    print(f"{'Month':<7}{'Principal':>16}{'Interest':>15}{'Total EMI':>15}{'Balance':>16}")
-    print("-" * 69)
+    # Adjusted spacing and removed |
+    print(f"{'Month':<7}{'Principal':>18}{'Interest':>18}{'Total EMI':>18}{'Balance':>18}")
+    print("-" * 79)
 
-    total_principal_paid = 0
-    total_interest_paid = 0
-    total_payment_made = 0
+    total_principal_paid_table = 0
+    total_interest_paid_table = 0
+    total_payment_made_table = 0
 
     for i in range(1, term_months + 1):
         interest = balance * monthly_rate
         total = principal_per_installment + interest
         balance -= principal_per_installment
         
-        if balance < 0.01: # Use a small epsilon for floating point comparison
+        if balance < 0.01:
             balance = 0.0
 
         principal_rounded = round(principal_per_installment, 2)
@@ -157,14 +144,16 @@ def calculate_loan_repayment_table():
         total_rounded = round(total, 2)
         balance_rounded = round(balance, 2)
 
-        print(f"{i:<7}{format_inr(principal_rounded):>16}{format_inr(interest_rounded):>15}{format_inr(total_rounded):>15}{format_inr(balance_rounded):>16}")
+        # Adjusted spacing and removed |
+        print(f"{i:<7}{format_inr(principal_rounded):>18}{format_inr(interest_rounded):>18}{format_inr(total_rounded):>18}{format_inr(balance_rounded):>18}")
 
-        total_principal_paid += principal_rounded
-        total_interest_paid += interest_rounded
-        total_payment_made += total_rounded
+        total_principal_paid_table += principal_rounded
+        total_interest_paid_table += interest_rounded
+        total_payment_made_table += total_rounded
 
-    print("-" * 69)
-    print(f"{'Total':<7}{format_inr(total_principal_paid):>16}{format_inr(total_interest_paid):>15}{format_inr(total_payment_made):>15}{'':>16}")
+    print("-" * 79)
+    # Adjusted spacing and removed |
+    print(f"{'Total':<7}{format_inr(total_principal_paid_table):>18}{format_inr(total_interest_paid_table):>18}{format_inr(total_payment_made_table):>18}{'':>18}")
     print("---------------------------------\n")
 
 
@@ -180,7 +169,7 @@ def calculate_fd_interest():
     
     while True:
         try:
-            principal_str = input("Enter FD Principal Amount (e.g., 100000): ")
+            principal_str = input("Enter FD Principal Amount: ") # Removed example
             principal = float(principal_str.replace(',', ''))
             if principal <= 0:
                 raise ValueError("Principal amount must be positive.")
@@ -190,7 +179,7 @@ def calculate_fd_interest():
 
     while True:
         try:
-            annual_rate_str = input("Enter Annual Interest Rate in % (e.g., 7.0): ")
+            annual_rate_str = input("Enter Annual Interest Rate (%): ") # Simplified prompt
             annual_rate = float(annual_rate_str)
             if annual_rate < 0:
                 raise ValueError("Interest rate cannot be negative.")
@@ -200,7 +189,7 @@ def calculate_fd_interest():
 
     while True:
         try:
-            tenure_months_str = input("Enter FD Tenure in Months (e.g., 36 for 3 years): ")
+            tenure_months_str = input("Enter FD Tenure (in months): ") # Simplified prompt
             tenure_months = int(tenure_months_str)
             if tenure_months <= 0:
                 raise ValueError("Tenure must be positive.")
@@ -242,7 +231,7 @@ def calculate_fd_interest():
         
         interest_per_month = principal * monthly_rate
         total_interest_earned = interest_per_month * tenure_months
-        maturity_amount = principal
+        maturity_amount = principal # At maturity, only principal is returned as interest was paid out
 
         print(f"\nFD Type: Monthly interest transferred to savings account")
         print(f"Principal Amount: {format_inr(principal)}")
@@ -255,7 +244,7 @@ def calculate_fd_interest():
     print(f"Tenure: {tenure_months} months")
     print("-" * 30)
 
-# --- NEW Interest Between Dates Calculator ---
+# --- Interest Between Dates Calculator ---
 
 def calculate_interest_between_dates():
     """
@@ -265,27 +254,27 @@ def calculate_interest_between_dates():
 
     while True:
         try:
-            date_format = "%Y-%m-%d"
-            start_date_str = input("Enter the first date (YYYY-MM-DD): ")
+            date_format = "%d-%m-%Y" # Changed to DD-MM-YYYY
+            start_date_str = input("Enter the first date (DD-MM-YYYY): ") # Changed prompt
             start_date = datetime.strptime(start_date_str, date_format).date()
             break
         except ValueError:
-            print("Invalid date format. Please use YYYY-MM-DD.")
+            print("Invalid date format. Please use DD-MM-YYYY.")
 
     while True:
         try:
-            date_format = "%Y-%m-%d"
-            end_date_str = input("Enter the second date (YYYY-MM-DD): ")
+            date_format = "%d-%m-%Y" # Changed to DD-MM-YYYY
+            end_date_str = input("Enter the second date (DD-MM-YYYY): ") # Changed prompt
             end_date = datetime.strptime(end_date_str, date_format).date()
             if end_date < start_date:
                 raise ValueError("End date cannot be before the start date.")
             break
         except ValueError as e:
-            print(f"Invalid date format or date order: {e}. Please use YYYY-MM-DD and ensure the end date is after the start date.")
+            print(f"Invalid date format or date order: {e}. Please use DD-MM-YYYY and ensure the end date is after the start date.")
 
     while True:
         try:
-            balance_str = input("Enter the balance: ")
+            balance_str = input("Enter the balance: ") # Removed example
             balance = float(balance_str.replace(',', ''))
             if balance < 0:
                 raise ValueError("Balance cannot be negative.")
@@ -295,7 +284,7 @@ def calculate_interest_between_dates():
 
     while True:
         try:
-            annual_rate_str = input("Enter the annual interest rate (%): ")
+            annual_rate_str = input("Enter the annual interest rate (%): ") # Simplified prompt
             annual_rate = float(annual_rate_str)
             if annual_rate < 0:
                 raise ValueError("Interest rate cannot be negative.")
@@ -305,7 +294,7 @@ def calculate_interest_between_dates():
 
     time_difference = end_date - start_date
     num_days = time_difference.days
-    print(f"\nNumber of days between {start_date} and {end_date}: {num_days}")
+    print(f"\nNumber of days between {start_date.strftime('%d-%m-%Y')} and {end_date.strftime('%d-%m-%Y')}: {num_days}") # Formatted dates
 
     daily_interest_rate = annual_rate / 100 / 365
     interest_per_day = balance * daily_interest_rate
@@ -317,36 +306,170 @@ def calculate_interest_between_dates():
         print(f"Approximate interest per month: {format_inr(monthly_interest_approx)}")
 
     interest_between_dates = balance * daily_interest_rate * num_days
-    print(f"Interest between {start_date} and {end_date}: {format_inr(interest_between_dates)}")
+    print(f"Interest between {start_date.strftime('%d-%m-%Y')} and {end_date.strftime('%d-%m-%Y')}: {format_inr(interest_between_dates)}")
     print("-" * 30)
+
+# --- Daily Deposit Interest Calculator ---
+def daily_deposit_interest_calculator():
+    print("\n--- Daily Deposit Interest Calculator ---")
+    while True:
+        try:
+            start_date_str = input("Enter Start Date (DD-MM-YYYY): ") # Changed prompt & format
+            start_date = datetime.strptime(start_date_str, "%d-%m-%Y")
+            break
+        except ValueError:
+            print("Invalid date format. Please use DD-MM-YYYY.")
+
+    while True:
+        try:
+            collection_amount_str = input("Enter Collection Amount: ") # Changed prompt
+            collection_amount = float(collection_amount_str.replace(',', ''))
+            if collection_amount <= 0:
+                print("Collection amount must be positive.")
+                continue
+            break
+        except ValueError:
+            print("Invalid amount. Please enter a number.")
+
+    while True:
+        frequency = input("Enter Deposit Frequency (Daily/Weekly/Monthly): ").strip().lower()
+        if frequency in ["daily", "weekly", "monthly"]:
+            break
+        else:
+            print("Invalid frequency. Please choose 'Daily', 'Weekly', or 'Monthly'.")
+
+    while True:
+        try:
+            annual_rate_str = input("Enter Annual Interest Rate (%): ") # Simplified prompt
+            annual_interest_rate = float(annual_rate_str)
+            if annual_interest_rate < 0:
+                print("Interest rate cannot be negative.")
+                continue
+            break
+        except ValueError:
+            print("Invalid interest rate. Please enter a number.")
+
+    while True:
+        try:
+            period_months_str = input("Enter Period (in months): ") # Simplified prompt
+            period_months = int(period_months_str)
+            if period_months <= 0:
+                print("Period must be a positive number of months.")
+                continue
+            break
+        except ValueError:
+            print("Invalid period. Please enter a whole number of months.")
+
+    end_date = start_date + timedelta(days=period_months * 30.4375)
+
+    print("\n--- Daily Deposit Details ---")
+    # Using loan repayment table style (no |)
+    header_fmt = "{:<12}{:>18}{:>18}{:>20}"
+    row_fmt =    "{:<12}{:>18}{:>18}{:>20}"
+    print(header_fmt.format('Date', 'Amount', 'Days Held', 'Interest Accrued'))
+    print("-" * 70) # Adjusted width
+
+    total_accrued_interest_display = 0 # This will sum up what's *displayed* in the table
+    
+    current_iteration_date = start_date
+    iteration_counter = 0
+
+    # Determine the step for iteration based on frequency
+    if frequency == "daily":
+        time_step = timedelta(days=1)
+    elif frequency == "weekly":
+        time_step = timedelta(weeks=1)
+    else: # monthly
+        time_step = None # Handled separately with calendar module
+
+    while current_iteration_date <= end_date:
+        days_held_for_this_deposit = (end_date - current_iteration_date).days
+        if days_held_for_this_deposit < 0: days_held_for_this_deposit = 0
+        
+        interest_for_this_entry = collection_amount * (annual_interest_rate / 100 / 365) * days_held_for_this_deposit
+        total_accrued_interest_display += interest_for_this_entry
+
+        print(row_fmt.format(
+            current_iteration_date.strftime('%d-%m-%Y'), # Formatted date
+            format_inr(collection_amount),
+            days_held_for_this_deposit,
+            format_inr(interest_for_this_entry)
+        ))
+
+        # Advance current_iteration_date based on frequency
+        if frequency == "monthly":
+            current_month = current_iteration_date.month
+            current_year = current_iteration_date.year
+            next_month = current_month + 1
+            next_year = current_year
+            if next_month > 12:
+                next_month = 1
+                next_year += 1
+            
+            try:
+                current_iteration_date = current_iteration_date.replace(year=next_year, month=next_month, day=start_date.day)
+            except ValueError: # Handle cases like Jan 31st to Feb (no Feb 31st)
+                last_day = calendar.monthrange(next_year, next_month)[1]
+                current_iteration_date = current_iteration_date.replace(year=next_year, month=next_month, day=last_day)
+        else:
+            current_iteration_date += time_step
+        
+        iteration_counter += 1
+        # Prevent infinite loops in edge cases or very long periods for display purposes
+        if iteration_counter > (period_months * (31 if frequency == "daily" else (4 if frequency=="weekly" else 1))) + 5: # Generous buffer
+             break
+
+    print("-" * 70)
+    print(f"{'Total (Displayed)':<12}{'':>18}{'':>18}{format_inr(total_accrued_interest_display):>20}")
+    print("---------------------------------\n")
+
+    # --- Summary Section for Daily Deposit Interest Calculator ---
+    print("\n--- Daily Deposit Calculation Summary ---")
+    print(f"Start Date:              {start_date.strftime('%d-%m-%Y')}") # Formatted date
+    print(f"Approx. End Date:        {end_date.strftime('%d-%m-%Y')}") # Formatted date
+    print(f"Period:                  {period_months} months")
+    print(f"Collection Amount:       {format_inr(collection_amount)}")
+    print(f"Annual Interest Rate:    {annual_interest_rate:.2f}%")
+    print(f"Deposit Frequency:       {frequency.capitalize()}")
+
+    overall_num_days = (end_date - start_date).days
+    overall_simple_interest = collection_amount * (annual_interest_rate / 100) * (overall_num_days / 365)
+    
+    print(f"Total Period Days:       {overall_num_days} days")
+    print(f"Calculated Simple Interest (Total Period): {format_inr(overall_simple_interest)}")
+    print(f"Maturity Value (Collection Amount + Simple Interest): {format_inr(collection_amount + overall_simple_interest)}")
+    print("--- End of Calculation ---")
+
 
 # --- Main Application Logic ---
 
 def main():
     """
-    The main function that runs the Cooperative Bank Calculator application.
+    The main function that runs the Bank Calculator application.
     It displays a menu and calls the appropriate calculation function based on user choice.
     """
     while True:
-        print("\n--- Welcome to the Cooperative Bank Calculator! ---")
-        print("1. Loan Calculator (Summary)")
-        print("2. Loan Repayment Schedule Table")
-        print("3. Fixed Deposit (FD) Interest Calculator")
-        print("4. Calculate Interest Between Dates") # New option
-        print("5. Exit")
+        print("\n--- Welcome to the Bank Calculator! ---")
+        print("A simple, user-friendly tool for your banking calculations.")
+        print("\nChoose an option:")
+        print("1. Loan Calculator (Summary & Optional Repayment Table)")
+        print("2. Fixed Deposit (FD) Interest Calculator")
+        print("3. Calculate Interest Between Dates")
+        print("4. Daily Deposit Interest Calculator")
+        print("5. Exit Application")
         
-        choice = input("Enter your choice: ")
+        choice = input("\nEnter your choice: ")
 
         if choice == '1':
-            calculate_loan_summary()
+            calculate_loan_summary_and_table()
         elif choice == '2':
-            calculate_loan_repayment_table()
-        elif choice == '3':
             calculate_fd_interest()
+        elif choice == '3':
+            calculate_interest_between_dates()
         elif choice == '4':
-            calculate_interest_between_dates() # Call the new function
+            daily_deposit_interest_calculator()
         elif choice == '5':
-            print("Thank you for using the calculator. Goodbye!")
+            print("Thank you for using the Cooperative Bank Calculator. Goodbye!")
             break
         else:
             print("Invalid choice. Please enter a number between 1 and 5.")
