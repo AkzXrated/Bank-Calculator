@@ -457,7 +457,7 @@ def main():
         elif choice == '4':
             daily_deposit_interest_calculator()
         elif choice == '5':
-            print("Thank you for using the Cooperative Bank Calculator. Goodbye!")
+            print("Thank you for using the Bank Calculator. Goodbye!")
             break
         else:
             print("Invalid choice. Please enter a number between 1 and 5.")
