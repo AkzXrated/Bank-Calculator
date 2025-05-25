@@ -370,6 +370,7 @@ def daily_deposit_interest_calculator():
     print("-" * 70) # Adjusted width
 
     total_accrued_interest_display = 0 # This will sum up what's *displayed* in the table
+    total_principal_deposited = 0 # NEW: To track total principal
     
     current_iteration_date = start_date
     iteration_counter = 0
@@ -388,6 +389,7 @@ def daily_deposit_interest_calculator():
         
         interest_for_this_entry = collection_amount * (annual_interest_rate / 100 / 365) * days_held_for_this_deposit
         total_accrued_interest_display += interest_for_this_entry
+        total_principal_deposited += collection_amount # NEW: Add this deposit to total principal
 
         print(row_fmt.format(
             current_iteration_date.strftime('%d-%m-%Y'), # Formatted date
@@ -420,7 +422,7 @@ def daily_deposit_interest_calculator():
              break
 
     print("-" * 70)
-    print(f"{'Total (Displayed)':<12}{'':>18}{'':>18}{format_inr(total_accrued_interest_display):>20}")
+    print(f"{'Total':<12}{format_inr(total_principal_deposited):>18}{'':>18}{format_inr(total_accrued_interest_display):>20}") # MODIFIED: Display total principal
     print("---------------------------------\n")
 
     # --- Summary Section for Daily Deposit Interest Calculator ---
@@ -428,16 +430,12 @@ def daily_deposit_interest_calculator():
     print(f"Start Date:              {start_date.strftime('%d-%m-%Y')}") # Formatted date
     print(f"Approx. End Date:        {end_date.strftime('%d-%m-%Y')}") # Formatted date
     print(f"Period:                  {period_months} months")
-    print(f"Collection Amount:       {format_inr(collection_amount)}")
+    print(f"Collection Amount per deposit: {format_inr(collection_amount)}") # MODIFIED: Clarified prompt
     print(f"Annual Interest Rate:    {annual_interest_rate:.2f}%")
     print(f"Deposit Frequency:       {frequency.capitalize()}")
-
-    overall_num_days = (end_date - start_date).days
-    overall_simple_interest = collection_amount * (annual_interest_rate / 100) * (overall_num_days / 365)
-    
-    print(f"Total Period Days:       {overall_num_days} days")
-    print(f"Calculated Simple Interest (Total Period): {format_inr(overall_simple_interest)}")
-    print(f"Maturity Value (Collection Amount + Simple Interest): {format_inr(collection_amount + overall_simple_interest)}")
+    print(f"Total Principal Deposited: {format_inr(total_principal_deposited)}") # NEW: Display total principal from summation
+    print(f"Total Interest Earned:   {format_inr(total_accrued_interest_display)}") # Using the accumulated interest
+    print(f"Maturity Value (Total Principal + Total Interest): {format_inr(total_principal_deposited + total_accrued_interest_display)}") # MODIFIED: Correct maturity value
     print("--- End of Calculation ---")
 
 
