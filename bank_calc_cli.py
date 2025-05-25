@@ -94,18 +94,8 @@ def calculate_loan_summary_and_table():
     print(f"Total Amount Paid (Principal + Interest): {format_inr(total_payments)}")
     print("-" * 30)
 
-    # Ask if user wants to see the detailed repayment schedule
-    while True:
-        show_table = input("\nDo you want to see the detailed repayment schedule table? (yes/no): ").strip().lower()
-        if show_table in ['yes', 'y']:
-            # Pass the already obtained values to the table function
-            calculate_loan_repayment_table(loan_amount, term_months, annual_rate)
-            break
-        elif show_table in ['no', 'n']:
-            print("Repayment schedule not displayed.")
-            break
-        else:
-            print("Invalid input. Please type 'yes' or 'no'.")
+    # Directly call the table function without asking
+    calculate_loan_repayment_table(loan_amount, term_months, annual_rate)
 
 
 # --- Loan Repayment Table Function (Modified to accept parameters) ---
@@ -422,7 +412,7 @@ def daily_deposit_interest_calculator():
              break
 
     print("-" * 70)
-    print(f"{'Total':<12}{format_inr(total_principal_deposited):>18}{'':>18}{format_inr(total_accrued_interest_display):>20}") # MODIFIED: Display total principal
+    print(f"{'Total (Displayed)':<12}{format_inr(total_principal_deposited):>18}{'':>18}{format_inr(total_accrued_interest_display):>20}") # MODIFIED: Display total principal
     print("---------------------------------\n")
 
     # --- Summary Section for Daily Deposit Interest Calculator ---
@@ -450,7 +440,7 @@ def main():
         print("\n--- Welcome to the Bank Calculator! ---")
         print("A simple, user-friendly tool for your banking calculations.")
         print("\nChoose an option:")
-        print("1. Loan Calculator (Summary & Optional Repayment Table)")
+        print("1. Loan Calculator (Summary & Repayment Table)")
         print("2. Fixed Deposit (FD) Interest Calculator")
         print("3. Calculate Interest Between Dates")
         print("4. Daily Deposit Interest Calculator")
