@@ -114,7 +114,7 @@ def calculate_loan_repayment_table(loan_amount, term_months, annual_rate):
 
     print("\n--- Monthly Repayment Details ---")
     # Adjusted spacing and removed |
-    print(f"{'Month':<7}{'Principal':>18}{'Interest':>18}{'Total EMI':>18}{'Balance':>18}")
+    print(f"{'Month':<7}{'Principal':>18}{'Interest':>18}{'Total':>18}{'Balance':>18}")
     print("-" * 79)
 
     total_principal_paid_table = 0
